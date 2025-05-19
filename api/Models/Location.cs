@@ -17,7 +17,7 @@ namespace api.Models
         public string? PhotoUrl { get; set; }
 
         public int CategoryId { get; set; }
-        public LocationsCategory LocationsCategory { get; set; } = null!;
+        public CategoryForLocations CategoryForLocations { get; set; } = null!;
         public List<Place> Places { get; set; } = new List<Place>();
 
 

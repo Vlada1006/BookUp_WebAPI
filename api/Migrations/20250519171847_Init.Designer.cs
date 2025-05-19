@@ -11,8 +11,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250519140343_Initial")]
-    partial class Initial
+    [Migration("20250519171847_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,26 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("api.Models.CategoryForLocations", b =>
+                {
+                    b.Property<int>("LocationCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationCategoryId"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LocationCategoryId");
+
+                    b.ToTable("LocCategories");
+                });
 
             modelBuilder.Entity("api.Models.Location", b =>
                 {
@@ -68,26 +88,6 @@ namespace api.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("api.Models.LocationsCategory", b =>
-                {
-                    b.Property<int>("LocationCategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationCategoryId"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LocationName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("LocationCategoryId");
-
-                    b.ToTable("LocCategories");
-                });
-
             modelBuilder.Entity("api.Models.Place", b =>
                 {
                     b.Property<int>("PlaceId")
@@ -125,13 +125,13 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.Location", b =>
                 {
-                    b.HasOne("api.Models.LocationsCategory", "LocationsCategory")
+                    b.HasOne("api.Models.CategoryForLocations", "CategoryForLocations")
                         .WithMany("Locations")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LocationsCategory");
+                    b.Navigation("CategoryForLocations");
                 });
 
             modelBuilder.Entity("api.Models.Place", b =>
@@ -145,14 +145,14 @@ namespace api.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("api.Models.CategoryForLocations", b =>
+                {
+                    b.Navigation("Locations");
+                });
+
             modelBuilder.Entity("api.Models.Location", b =>
                 {
                     b.Navigation("Places");
-                });
-
-            modelBuilder.Entity("api.Models.LocationsCategory", b =>
-                {
-                    b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618
         }
