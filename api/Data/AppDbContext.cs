@@ -12,7 +12,7 @@ namespace api.Data
     {
         public AppDbContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<LocationsCategory> LocCategories { get; set; }
+        public DbSet<CategoryForLocations> LocCategories { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Place> Places { get; set; }
 
@@ -20,9 +20,9 @@ namespace api.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<LocationsCategory>()
+            builder.Entity<CategoryForLocations>()
             .HasMany(u => u.Locations)
-            .WithOne(u => u.LocationsCategory)
+            .WithOne(u => u.CategoryForLocations)
             .HasForeignKey(u => u.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
 

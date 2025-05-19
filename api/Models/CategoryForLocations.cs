@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace api.Models
 {
-    public class LocationsCategory
+    public class CategoryForLocations
     {
         [Key]
         public int LocationCategoryId { get; set; }
-        public string LocationName { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
         public string? Description { get; set; }
         public List<Location> Locations { get; set; } = new List<Location>();
     }
