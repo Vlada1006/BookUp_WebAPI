@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using api.DTOs.Locations;
+using api.Models;
+
+namespace api.Mappers
+{
+    public static class LocationMappers
+    {
+        public static LocationDTO ToLocationDto(this Location locationModel)
+        {
+            return new LocationDTO
+            {
+                LocationId = locationModel.LocationId,
+                LocationName = locationModel.LocationName,
+                Address = locationModel.Address,
+                City = locationModel.City,
+                ContactEmail = locationModel.ContactEmail,
+                ContactPhone = locationModel.ContactPhone,
+                Description = locationModel.Description,
+                PhotoUrl = locationModel.PhotoUrl,
+                CategoryId = locationModel.CategoryId,
+                Places = locationModel.Places.Select(u => u.ToPlaceDto()).ToList()
+            };
+        }
+    }
+}

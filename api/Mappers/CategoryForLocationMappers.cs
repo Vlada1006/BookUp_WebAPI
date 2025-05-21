@@ -15,8 +15,16 @@ namespace api.Mappers
             {
                 LocationCategoryId = categoryModel.LocationCategoryId,
                 CategoryName = categoryModel.CategoryName,
-                Description = categoryModel.Description,
-                Locations = categoryModel.Locations.Select(u => u.ToLocationDto()).ToList()
+                Description = categoryModel.Description
+            };
+        }
+
+        public static CategoryForLocations ToCreateCategoryForLocationDto(this CategoryForLocsForCreateDTO createDTO)
+        {
+            return new CategoryForLocations
+            {
+                CategoryName = createDTO.CategoryName,
+                Description = createDTO.Description
             };
         }
     }

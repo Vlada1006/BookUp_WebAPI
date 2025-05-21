@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddDbContext<AppDbContext>(u => u.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -14,13 +14,16 @@ builder.Services.AddScoped<ILocationCategoryInterface, LocationCategoryRepositor
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseRouting();
+
+app.UseHttpsRedirection();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.MapControllers();
 
 app.Run();
 

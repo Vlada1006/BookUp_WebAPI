@@ -2,14 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using api.DTOs.Locations;
-using api.Models;
 
 namespace api.DTOs.CategoryForLocations
 {
-    public class CategoryForLocDTO
+    public class CategoryForLocsForCreateDTO
     {
-        public int LocationCategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string? Description { get; set; }
     }
