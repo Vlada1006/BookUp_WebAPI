@@ -11,6 +11,7 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDbContext<AppDbContext>(u => u.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ILocationCategoryInterface, LocationCategoryRepository>();
+builder.Services.AddScoped<ILocationInterface, LocationRepository>();
 
 var app = builder.Build();
 
