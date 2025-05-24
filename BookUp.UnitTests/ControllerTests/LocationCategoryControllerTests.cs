@@ -8,6 +8,7 @@ using api.Models;
 using api.Repositories;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -155,6 +156,124 @@ namespace BookUp.UnitTests.ControllerTests
             var result = await controller.UpdateCategory(id, updateDTO);
 
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task PartialUpdateCategory_ReturnsNotFound()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var controller = new LocationCategoryController(_categoryRepo);
+            var id = 1;
+            var patchDoc = new JsonPatchDocument<CategoryForLocForPartialUpdateDTO>();
+            patchDoc.Replace(u => u.CategoryName, "Updated");
+
+            var updatedCategory = new CategoryForLocations
+            {
+                LocationCategoryId = id,
+                CategoryName = "Updated"
+            };
+
+            A.CallTo(() => _categoryRepo.PartialUpdateCategory(id, A<CategoryForLocForPartialUpdateDTO>.Ignored))
+            .Returns(Task.FromResult(updatedCategory));
+
+            var result = await controller.PartialUpdateCategory(id, patchDoc);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<CategoryForLocDTO>(okResult.Value);
+            Assert.Equal("Updated", returnValue.CategoryName);
+        }
+
+        [Fact]
+        public async Task PartialUpdateCategory_ReturnsUpdatedCategory()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var controller = new LocationCategoryController(_categoryRepo);
+            var id = 99;
+            var patchDoc = new JsonPatchDocument<CategoryForLocForPartialUpdateDTO>();
+            patchDoc.Replace(u => u.CategoryName, "That`s bad");
+
+            A.CallTo(() => _categoryRepo.PartialUpdateCategory(id, A<CategoryForLocForPartialUpdateDTO>.Ignored))
+            .Returns(Task.FromResult<CategoryForLocations>(null));
+
+            var result = await controller.PartialUpdateCategory(id, patchDoc);
+
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Category not found.", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteCategory_ReturnsOk()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var id = 1;
+            var fakeCategory = new CategoryForLocations
+            {
+                LocationCategoryId = id,
+                CategoryName = "Lalala"
+            };
+
+            var controller = new LocationCategoryController(_categoryRepo);
+
+            A.CallTo(() => _categoryRepo.DeleteCategory(id)).Returns(Task.FromResult(fakeCategory));
+
+            var result = await controller.DeleteCategory(id);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Deleted!", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteCategory_ReturnsNotFound()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var id = 99;
+            var fakeCategory = new CategoryForLocations
+            {
+                LocationCategoryId = id,
+                CategoryName = "Lalala"
+            };
+
+            var controller = new LocationCategoryController(_categoryRepo);
+
+            A.CallTo(() => _categoryRepo.DeleteCategory(id)).Returns(Task.FromResult<CategoryForLocations>(null));
+
+            var result = await controller.DeleteCategory(id);
+
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteMultipleCategories_ReturnsDeletedCategories()
+        {
+            var ids = new int[] { 1, 2, 3 };
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var controller = new LocationCategoryController(_categoryRepo);
+            var fakeCategories = new List<CategoryForLocations>
+            {
+                new CategoryForLocations {LocationCategoryId = 1, CategoryName= "Lala" },
+                new CategoryForLocations {LocationCategoryId = 2, CategoryName = "blabla"}
+            };
+
+            A.CallTo(() => _categoryRepo.DeleteMultipleCategories(ids))
+            .Returns(Task.FromResult<IEnumerable<CategoryForLocations>>(fakeCategories));
+
+            var result = await controller.DeleteMultipleCategories(ids);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Deleted!", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteMultipleCategories_ReturnsNotFound()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var controller = new LocationCategoryController(_categoryRepo);
+
+            var notFoundResult = await controller.DeleteMultipleCategories(null);
+            var emptyResult = await controller.DeleteMultipleCategories(Array.Empty<int>());
+
+            Assert.IsType<NotFoundObjectResult>(notFoundResult);
+            Assert.IsType<NotFoundObjectResult>(emptyResult);
         }
     }
 }

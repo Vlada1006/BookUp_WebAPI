@@ -117,7 +117,13 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _locationCategoryRepo.DeleteCategory(id);
+            var categoryToDelete = await _locationCategoryRepo.DeleteCategory(id);
+
+            if (categoryToDelete == null)
+            {
+                return NotFound("Category not found");
+            }
+
             return Ok("Deleted!");
         }
 
