@@ -74,12 +74,6 @@ namespace BookUp.UnitTests.ControllerTests
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
             var controller = new LocationCategoryController(_categoryRepo);
 
-            var fakeCategory = new CategoryForLocations
-            {
-                LocationCategoryId = id,
-                CategoryName = "Lalala"
-            };
-
             A.CallTo(() => _categoryRepo.GetCategoryById(id)).Returns(Task.FromResult<CategoryForLocations>(null));
 
             var result = await controller.GetCategoryById(id);

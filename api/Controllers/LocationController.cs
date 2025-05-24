@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Helpers;
 using api.Interfaces;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,9 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllLocations()
+        public async Task<IActionResult> GetAllLocations([FromQuery] QueryParameters queryParameters)
         {
-            var locations = await _locationRepo.GetLocations();
+            var locations = await _locationRepo.GetLocations(queryParameters);
 
             if (locations == null)
             {
@@ -30,6 +31,20 @@ namespace api.Controllers
 
             var locationsDTO = locations.Select(u => u.ToLocationDto());
             return Ok(locationsDTO.ToList());
+        }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetLocationById(int id)
+        {
+            var location = await _locationRepo.GetLocationById(id);
+
+            if (location == null)
+            {
+                return NotFound("Location not found");
+            }
+
+            return Ok(location.ToLocationDto());
         }
 
 

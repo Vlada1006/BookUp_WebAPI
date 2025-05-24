@@ -9,6 +9,7 @@ namespace api.Helpers
     {
         public string? NameSearchTerm { get; set; }
         public string? Name { get; set; }
+        public string? City { get; set; }
         const int _maxSize = 25;
         private int _size = 50;
 
