@@ -17,6 +17,6 @@ namespace api.Interfaces
         public Task<CategoryForLocations?> PartialUpdateCategory(int id, CategoryForLocForPartialUpdateDTO patchDTO);
         public Task<CategoryForLocations?> DeleteCategory(int id);
         public Task<IEnumerable<CategoryForLocations?>> DeleteMultipleCategories(int[] ids);
-
+        public Task<List<Location>> GetLocationsByCategory(int id);
     }
 }

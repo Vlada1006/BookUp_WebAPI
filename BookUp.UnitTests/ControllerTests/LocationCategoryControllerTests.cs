@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using api.Controllers;
 using api.DTOs.CategoryForLocations;
+using api.DTOs.Locations;
 using api.Helpers;
 using api.Interfaces;
 using api.Mappers;
@@ -14,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookUp.UnitTests.ControllerTests
 {
-    public class LocationCategoryControllerTests
+    public class CategoryForLocationControllerTests
     {
         [Fact]
         public async Task GetAllCategories_ReturnsOK()
@@ -22,7 +23,7 @@ namespace BookUp.UnitTests.ControllerTests
             //arrange
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
 
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             var parameters = new QueryParameters();
 
@@ -49,7 +50,7 @@ namespace BookUp.UnitTests.ControllerTests
         {
             int id = 1;
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             var fakeCategory = new CategoryForLocations
             {
@@ -72,7 +73,7 @@ namespace BookUp.UnitTests.ControllerTests
         {
             int id = 999;
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             A.CallTo(() => _categoryRepo.GetCategoryById(id)).Returns(Task.FromResult<CategoryForLocations>(null));
 
@@ -90,7 +91,7 @@ namespace BookUp.UnitTests.ControllerTests
                 CategoryName = "Nature"
             };
 
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
             var categoryModel = createDTO.ToCreateCategoryForLocationDto();
 
             A.CallTo(() => _categoryRepo.CreateCategory(A<CategoryForLocations>.Ignored))
@@ -109,7 +110,7 @@ namespace BookUp.UnitTests.ControllerTests
         {
             int id = 1;
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             var updateDTO = new CategoryForLocForUpdateDTO
             {
@@ -137,7 +138,7 @@ namespace BookUp.UnitTests.ControllerTests
         {
             int id = 999;
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             var updateDTO = new CategoryForLocForUpdateDTO
             {
@@ -153,10 +154,10 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task PartialUpdateCategory_ReturnsNotFound()
+        public async Task PartialUpdateCategory_ReturnsOK()
         {
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
             var id = 1;
             var patchDoc = new JsonPatchDocument<CategoryForLocForPartialUpdateDTO>();
             patchDoc.Replace(u => u.CategoryName, "Updated");
@@ -178,10 +179,10 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task PartialUpdateCategory_ReturnsUpdatedCategory()
+        public async Task PartialUpdateCategory_ReturnsNotFound()
         {
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
             var id = 99;
             var patchDoc = new JsonPatchDocument<CategoryForLocForPartialUpdateDTO>();
             patchDoc.Replace(u => u.CategoryName, "That`s bad");
@@ -206,7 +207,7 @@ namespace BookUp.UnitTests.ControllerTests
                 CategoryName = "Lalala"
             };
 
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             A.CallTo(() => _categoryRepo.DeleteCategory(id)).Returns(Task.FromResult(fakeCategory));
 
@@ -227,7 +228,7 @@ namespace BookUp.UnitTests.ControllerTests
                 CategoryName = "Lalala"
             };
 
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             A.CallTo(() => _categoryRepo.DeleteCategory(id)).Returns(Task.FromResult<CategoryForLocations>(null));
 
@@ -241,7 +242,7 @@ namespace BookUp.UnitTests.ControllerTests
         {
             var ids = new int[] { 1, 2, 3 };
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
             var fakeCategories = new List<CategoryForLocations>
             {
                 new CategoryForLocations {LocationCategoryId = 1, CategoryName= "Lala" },
@@ -261,13 +262,54 @@ namespace BookUp.UnitTests.ControllerTests
         public async Task DeleteMultipleCategories_ReturnsNotFound()
         {
             var _categoryRepo = A.Fake<ILocationCategoryInterface>();
-            var controller = new LocationCategoryController(_categoryRepo);
+            var controller = new CategoryForLocationController(_categoryRepo);
 
             var notFoundResult = await controller.DeleteMultipleCategories(null);
             var emptyResult = await controller.DeleteMultipleCategories(Array.Empty<int>());
 
             Assert.IsType<NotFoundObjectResult>(notFoundResult);
             Assert.IsType<NotFoundObjectResult>(emptyResult);
+        }
+
+        [Fact]
+        public async Task GetLocationsByCategoryId_ReturnsOK()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var controller = new CategoryForLocationController(_categoryRepo);
+            var categoryId = 1;
+            var fakeCategory = new CategoryForLocations { LocationCategoryId = categoryId };
+            var fakeLocations = new List<Location>
+            {
+                new Location { LocationId = 1, LocationName = "Coworking" },
+                new Location { LocationId = 2, LocationName = "Studio" }
+            };
+
+            A.CallTo(() => _categoryRepo.GetCategoryById(categoryId)).Returns(Task.FromResult(fakeCategory));
+            A.CallTo(() => _categoryRepo.GetLocationsByCategory(categoryId)).Returns(Task.FromResult(fakeLocations));
+
+            var result = await controller.GetLocationsByCategoryId(categoryId);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<List<LocationDTO>>(okResult.Value);
+        }
+
+        [Fact]
+        public async Task GetLocationsByCategoryId_ReturnsNotFound()
+        {
+            var _categoryRepo = A.Fake<ILocationCategoryInterface>();
+            var controller = new CategoryForLocationController(_categoryRepo);
+            var categoryId = 99;
+            var fakeCategory = new CategoryForLocations { LocationCategoryId = categoryId };
+            var fakeLocations = new List<Location>();
+
+
+            A.CallTo(() => _categoryRepo.GetCategoryById(categoryId)).Returns(Task.FromResult(fakeCategory));
+            A.CallTo(() => _categoryRepo.GetLocationsByCategory(categoryId)).Returns(Task.FromResult(new List<Location>()));
+
+            var result = await controller.GetLocationsByCategoryId(categoryId);
+
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("No locations found for the specified category", notFoundResult.Value);
         }
     }
 }

@@ -25,5 +25,23 @@ namespace api.Mappers
                 Places = locationModel.Places.Select(u => u.ToPlaceDto()).ToList()
             };
         }
+
+        public static Location ToLocationForCreateDto(this LocationForCreateDTO createDTO)
+        {
+            return new Location
+            {
+                LocationName = createDTO.LocationName,
+                Address = createDTO.Address,
+                City = createDTO.City,
+                ContactEmail = createDTO.ContactEmail,
+                ContactPhone = createDTO.ContactPhone,
+                Description = createDTO.Description,
+                PhotoUrl = createDTO.PhotoUrl,
+                CategoryId = createDTO.CategoryId
+            };
+        }
+
+
+
     }
 }

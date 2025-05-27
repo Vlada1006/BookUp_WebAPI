@@ -135,5 +135,11 @@ namespace api.Repositories
 
             return categories;
         }
+
+        public async Task<List<Location>> GetLocationsByCategory(int id)
+        {
+            var locations = await _db.Locations.Where(u => u.CategoryId == id).ToListAsync();
+            return locations;
+        }
     }
 }

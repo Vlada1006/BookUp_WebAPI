@@ -15,10 +15,10 @@ namespace api.Controllers
 {
     [ApiController]
     [Route("api/categories")]
-    public class LocationCategoryController : ControllerBase
+    public class CategoryForLocationController : ControllerBase
     {
         private readonly ILocationCategoryInterface _locationCategoryRepo;
-        public LocationCategoryController(ILocationCategoryInterface locationCategoryRepo)
+        public CategoryForLocationController(ILocationCategoryInterface locationCategoryRepo)
         {
             _locationCategoryRepo = locationCategoryRepo;
         }
@@ -35,7 +35,7 @@ namespace api.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<IActionResult> GetCategoryById(int id)
+        public async Task<IActionResult> GetCategoryById([FromRoute] int id)
         {
             var category = await _locationCategoryRepo.GetCategoryById(id);
 
@@ -110,7 +110,7 @@ namespace api.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -148,6 +148,27 @@ namespace api.Controllers
                 return NotFound("Categories not found!");
             }
             return Ok("Deleted!");
+        }
+
+        [HttpGet]
+        [Route("{id:int}/locations")]
+        public async Task<IActionResult> GetLocationsByCategoryId([FromRoute] int id)
+        {
+            var category = await _locationCategoryRepo.GetCategoryById(id);
+            if (category == null)
+            {
+                return NotFound("Category not found");
+            }
+
+            var locations = await _locationCategoryRepo.GetLocationsByCategory(id);
+
+            if (locations.Count == 0 || locations == null)
+            {
+                return NotFound("No locations found for the specified category");
+            }
+            var locationsDTO = locations.Select(u => u.ToLocationDto()).ToList();
+
+            return Ok(locationsDTO);
         }
 
     }
