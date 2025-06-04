@@ -171,5 +171,79 @@ namespace BookUp.UnitTests.ControllerTests
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("Location not found", notFoundResult.Value);
         }
+
+        [Fact]
+        public async Task DeleteCategory_ReturnsOk()
+        {
+            var _locationRepo = A.Fake<ILocationInterface>();
+            var controller = new LocationController(_locationRepo);
+            var id = 1;
+            var fakeLocation = new Location
+            {
+                LocationId = id,
+                LocationName = "Lalala"
+            };
+
+            A.CallTo(() => _locationRepo.DeleteLocation(id)).Returns(Task.FromResult(fakeLocation));
+
+            var result = await controller.DeleteLocation(id);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Deleted", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteCategory_ReturnsNotFound()
+        {
+            var _locationRepo = A.Fake<ILocationInterface>();
+            var id = 99;
+            var fakeLocation = new Location
+            {
+                LocationId = id,
+                LocationName = "Lalala"
+            };
+
+            var controller = new LocationController(_locationRepo);
+
+            A.CallTo(() => _locationRepo.DeleteLocation(id)).Returns(Task.FromResult<Location>(null));
+
+            var result = await controller.DeleteLocation(id);
+
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteMultipleCategories_ReturnsDeletedCategories()
+        {
+            var ids = new int[] { 1, 2, 3 };
+            var _locationRepo = A.Fake<ILocationInterface>();
+            var controller = new LocationController(_locationRepo);
+            var fakeLocations = new List<Location>
+            {
+                new Location {LocationId = 1, LocationName= "Lala" },
+                new Location {LocationId = 2, LocationName = "blabla"}
+            };
+
+            A.CallTo(() => _locationRepo.DeleteMultipleLocations(ids))
+            .Returns(Task.FromResult<IEnumerable<Location>>(fakeLocations));
+
+            var result = await controller.DeleteMultipleLocations(ids);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Deleted", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteMultipleCategories_ReturnsNotFound()
+        {
+            var _locationRepo = A.Fake<ILocationInterface>();
+            var controller = new LocationController(_locationRepo);
+
+            var notFoundResult = await controller.DeleteMultipleLocations(null);
+            var emptyResult = await controller.DeleteMultipleLocations(Array.Empty<int>());
+
+            Assert.IsType<NotFoundObjectResult>(notFoundResult);
+            Assert.IsType<NotFoundObjectResult>(emptyResult);
+        }
     }
 }

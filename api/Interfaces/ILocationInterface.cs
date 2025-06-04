@@ -15,5 +15,7 @@ namespace api.Interfaces
         public Task<Location> CreateLocation(Location locationModel);
         public Task<Location?> UpdateLocation(int id, LocationForUpdateDTO updateDTO);
         public Task<Location?> PartialUpdateLocation(int id, LocationForPartialUpdateDTO updateDTO);
+        public Task<Location?> DeleteLocation(int id);
+        public Task<IEnumerable<Location?>> DeleteMultipleLocations(int[] ids);
     }
 }

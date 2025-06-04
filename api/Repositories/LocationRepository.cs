@@ -109,5 +109,46 @@ namespace api.Repositories
 
             return location;
         }
+
+        public async Task<Location?> DeleteLocation(int id)
+        {
+            var location = await _db.Locations.FirstOrDefaultAsync(u => u.LocationId == id);
+
+            if (location == null)
+            {
+                return null;
+            }
+
+            _db.Locations.Remove(location);
+            await _db.SaveChangesAsync();
+            return location;
+        }
+
+        public async Task<IEnumerable<Location?>> DeleteMultipleLocations(int[] ids)
+        {
+            var locations = new List<Location>();
+
+            foreach (var id in ids)
+            {
+                var location = await _db.Locations.FirstOrDefaultAsync(u => u.LocationId == id);
+
+                if (location == null)
+                {
+                    continue;
+                }
+
+                locations.Add(location);
+            }
+
+            if (locations.Count == 0)
+            {
+                return Enumerable.Empty<Location>();
+            }
+
+            _db.Locations.RemoveRange(locations);
+            await _db.SaveChangesAsync();
+
+            return locations;
+        }
     }
 }

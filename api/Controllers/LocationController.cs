@@ -108,8 +108,49 @@ namespace api.Controllers
             }
 
             return Ok(locationToUpdate.ToLocationDto());
-
         }
 
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> DeleteLocation([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var categoryToDelete = await _locationRepo.DeleteLocation(id);
+
+            if (categoryToDelete == null)
+            {
+                return NotFound("Location not found");
+            }
+
+            return Ok("Deleted");
+        }
+
+        [HttpDelete]
+        [Route("multiple")]
+        public async Task<IActionResult> DeleteMultipleLocations([FromQuery] int[] ids)
+        {
+            if (!ModelState.IsValid) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (ids == null || ids.Length == 0)
+            {
+                return NotFound("IDd not found");
+            }
+
+            var locationsToDelete = await _locationRepo.DeleteMultipleLocations(ids);
+
+            if (locationsToDelete == null || !locationsToDelete.Any())
+            {
+                return NotFound("Locations not found");
+            }
+
+            return Ok("Deleted");
+        }
     }
 }
