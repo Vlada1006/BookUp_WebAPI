@@ -36,6 +36,11 @@ namespace api.Repositories
                 categories = categories.Where(u => u.CategoryName == queryParameters.Name);
             }
 
+           if (queryParameters.SortBy == "name")
+            {
+                categories = !queryParameters.IsDescending ? categories.OrderBy(u => u.CategoryName) : categories.OrderByDescending(u => u.CategoryName);
+            }
+
             categories = categories.Skip(queryParameters.Size * (queryParameters.Page - 1)).Take(queryParameters.Size);
 
             return await categories.ToListAsync();
