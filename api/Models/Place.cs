@@ -17,10 +17,11 @@ namespace api.Models
         public int Capacity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
-        public bool IsAvailable { get; set; } = true;
 
         public int LocationId { get; set; }
         public Location Location { get; set; } = null!;
+
+        public List<Booking> Bookings { get; set; } = new List<Booking>();
 
     }
 }

@@ -27,7 +27,10 @@ builder.Services.AddSingleton(provider =>
 
 builder.Services.AddScoped<ILocationCategoryInterface, LocationCategoryRepository>();
 builder.Services.AddScoped<ILocationInterface, LocationRepository>();
+builder.Services.AddScoped<IPlaceInterface, PlaceRepository>();
+
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<PlaceAvailabilityService>();
 
 var app = builder.Build();
 

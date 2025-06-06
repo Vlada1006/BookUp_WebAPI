@@ -18,7 +18,6 @@ namespace api.Mappers
                 TypeOfPlace = placeModel.TypeOfPlace,
                 Capacity = placeModel.Capacity,
                 Price = placeModel.Price,
-                IsAvailable = placeModel.IsAvailable,
                 LocationId = placeModel.LocationId
             };
         }

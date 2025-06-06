@@ -15,6 +15,7 @@ namespace api.Data
         public DbSet<CategoryForLocations> LocCategories { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Place> Places { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,6 +37,12 @@ namespace api.Data
             .HasOne(u => u.Location)
             .WithMany(u => u.Places)
             .HasForeignKey(u => u.LocationId);
+
+            builder.Entity<Booking>()
+            .HasOne(u => u.Place)
+            .WithMany(u => u.Bookings)
+            .HasForeignKey(u => u.PlaceId)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
