@@ -21,8 +21,7 @@ namespace api.Mappers
                 ContactPhone = locationModel.ContactPhone,
                 Description = locationModel.Description,
                 PhotoUrl = locationModel.PhotoUrl,
-                CategoryId = locationModel.CategoryId,
-                Places = locationModel.Places.Select(u => u.ToPlaceDto()).ToList()
+                CategoryId = locationModel.CategoryId
             };
         }
 

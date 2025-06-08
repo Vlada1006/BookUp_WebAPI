@@ -9,7 +9,7 @@ namespace api.Helpers
     {
         public string? SearchTerm { get; set; }
         public string? Name { get; set; }
-        public int? Capacity { get; set; }
+        public int? MaxCapacity { get; set; }
         public int? MinPrice { get; set; }
         public int? MaxPrice { get; set; }
         public bool? OnlyFullyAvailable { get; set; }

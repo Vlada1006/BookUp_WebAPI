@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.DTOs.Places;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using api.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +24,7 @@ namespace api.Repositories
             _availabilityService = availabilityService;
         }
 
+
         public async Task<List<Place>> GetPlaces(PlaceQueryParameters queryParameters)
         {
             var places = _db.Places.Include(u => u.Bookings).AsQueryable();
@@ -36,13 +39,13 @@ namespace api.Repositories
                 places = places.Where(u => u.PlaceName == queryParameters.Name);
             }
 
-            if (queryParameters.Capacity != null)
+            if (queryParameters.MaxCapacity != null)
             {
-                if (queryParameters.Capacity <= 10)
+                if (queryParameters.MaxCapacity <= 10)
                 {
                     places = places.Where(u => u.Capacity <= 10);
                 }
-                else if (queryParameters.Capacity > 10 && queryParameters.Capacity <= 50)
+                else if (queryParameters.MaxCapacity > 10 && queryParameters.MaxCapacity <= 50)
                 {
                     places = places.Where(u => u.Capacity > 10 && u.Capacity <= 50);
                 }
@@ -80,7 +83,46 @@ namespace api.Repositories
             places = places.Skip(queryParameters.Size * (queryParameters.Page - 1)).Take(queryParameters.Size);
 
             return await places.ToListAsync();
-            
+        }
+
+        public async Task<Place?> GetPlaceById(int id)
+        {
+            var place = await _db.Places.FirstOrDefaultAsync(u => u.PlaceId == id);
+
+            if (place == null)
+            {
+                return null;
+            }
+
+            return place;
+        }
+
+        public async Task<Place> CreatePlace(Place placeModel)
+        {
+            await _db.Places.AddAsync(placeModel);
+            await _db.SaveChangesAsync();
+
+            return placeModel;
+
+        }
+
+        public async Task<Place?> UpdatePlace(int id, PlaceForUpdateDTO updateDTO)
+        {
+            var place = await _db.Places.FirstOrDefaultAsync(u => u.PlaceId == id);
+
+            if (place == null)
+            {
+                return null;
+            }
+
+            place.PlaceName = updateDTO.PlaceName;
+            place.TypeOfPlace = updateDTO.TypeOfPlace;
+            place.Capacity = updateDTO.Capacity;
+            place.Price = place.Price;
+
+            await _db.SaveChangesAsync();
+
+            return place;
         }
     }
 }

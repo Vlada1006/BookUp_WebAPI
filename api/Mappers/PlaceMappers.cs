@@ -21,5 +21,18 @@ namespace api.Mappers
                 LocationId = placeModel.LocationId
             };
         }
+
+        public static Place ToPlaceForCreateDto(this PlaceForCreateDTO createDTO)
+        {
+            return new Place
+            {
+                PlaceName = createDTO.PlaceName,
+                TypeOfPlace = createDTO.TypeOfPlace,
+                Capacity = createDTO.Capacity,
+                Price = createDTO.Price,
+                LocationId = createDTO.LocationId
+            };
+        }
+        
     }
 }
