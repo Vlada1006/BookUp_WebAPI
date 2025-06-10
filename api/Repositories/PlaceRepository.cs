@@ -124,5 +124,66 @@ namespace api.Repositories
 
             return place;
         }
+
+        public async Task<Place?> PartialPlaceUpdate(int id, PlaceForPartialUpdateDTO patchDTO)
+        {
+            var place = await _db.Places.FirstOrDefaultAsync(u => u.PlaceId == id);
+
+            if (place == null)
+            {
+                return null;
+            }
+
+            if (patchDTO.PlaceName != null) place.PlaceName = patchDTO.PlaceName;
+            if (patchDTO.TypeOfPlace != null) place.TypeOfPlace = patchDTO.TypeOfPlace;
+            if (patchDTO.Capacity.HasValue) place.Capacity = patchDTO.Capacity.Value;
+            if (patchDTO.Price.HasValue) place.Price = patchDTO.Price.Value;
+
+            await _db.SaveChangesAsync();
+            return place;
+
+        }
+
+        public async Task<Place?> DeletePlace(int id)
+        {
+            var place = await _db.Places.FirstOrDefaultAsync(u => u.PlaceId == id);
+
+            if (place == null)
+            {
+                return null;
+            }
+
+            _db.Places.Remove(place);
+            await _db.SaveChangesAsync();
+
+            return place;
+        }
+
+        public async Task<IEnumerable<Place?>> DeletePlaces(int[] ids)
+        {
+            var places = new List<Place>();
+
+            foreach (var id in ids)
+            {
+                var place = await _db.Places.FirstOrDefaultAsync(u => u.PlaceId == id);
+
+                if (place == null)
+                {
+                    continue;
+                }
+
+                places.Add(place);
+            }
+
+            if (places.Count == 0 || !places.Any())
+            {
+                return Enumerable.Empty<Place>();
+            }
+
+            _db.Places.RemoveRange(places);
+            await _db.SaveChangesAsync();
+
+            return places;
+        }
     }
 }

@@ -14,7 +14,6 @@ namespace api.DTOs.Places
         public int Capacity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
-        public bool IsAvailable { get; set; } = true;
         public int LocationId { get; set; }
     }
 }

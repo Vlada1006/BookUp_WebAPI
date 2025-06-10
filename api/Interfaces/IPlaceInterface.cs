@@ -14,5 +14,8 @@ namespace api.Interfaces
         public Task<Place?> GetPlaceById(int id);
         public Task<Place> CreatePlace(Place placeModel);
         public Task<Place?> UpdatePlace(int id, PlaceForUpdateDTO updateDTO);
+        public Task<Place?> PartialPlaceUpdate(int id, PlaceForPartialUpdateDTO updateDTO);
+        public Task<Place?> DeletePlace(int id);
+        public Task<IEnumerable<Place?>> DeletePlaces(int[] ids);
     }
 }

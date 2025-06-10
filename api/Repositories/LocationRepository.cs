@@ -150,5 +150,17 @@ namespace api.Repositories
 
             return locations;
         }
+
+        public async Task<List<Place?>> GetPlacesByLocation(int id)
+        {
+            var places = await _db.Places.Where(u => u.LocationId == id).ToListAsync();
+
+            if (places == null)
+            {
+                return null;
+            }
+
+            return places;
+        }
     }
 }

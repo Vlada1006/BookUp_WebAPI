@@ -133,14 +133,14 @@ namespace api.Controllers
         [Route("multiple")]
         public async Task<IActionResult> DeleteMultipleLocations([FromQuery] int[] ids)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             if (ids == null || ids.Length == 0)
             {
-                return NotFound("IDd not found");
+                return NotFound("IDs not found");
             }
 
             var locationsToDelete = await _locationRepo.DeleteMultipleLocations(ids);
@@ -151,6 +151,29 @@ namespace api.Controllers
             }
 
             return Ok("Deleted");
+        }
+
+        [HttpGet]
+        [Route("{id:int}/places")]
+        public async Task<IActionResult> GetPlacesByLocationId([FromRoute] int id)
+        {
+            var location = await _locationRepo.GetLocationById(id);
+
+            if (location == null)
+            {
+                return NotFound("The location not found");
+            }
+
+            var places = await _locationRepo.GetPlacesByLocation(id);
+
+            if (places == null || !places.Any())
+            {
+                return NotFound("Places for the spesific location not found");
+            }
+
+            var placesDTO = places.Select(u => u.ToPlaceDto()).ToList();
+
+            return Ok(placesDTO);
         }
     }
 }
