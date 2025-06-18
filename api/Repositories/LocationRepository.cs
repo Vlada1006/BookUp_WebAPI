@@ -67,7 +67,7 @@ namespace api.Repositories
             return locationModel;
         }
 
-        public async Task<Location> UpdateLocation(int id, LocationForUpdateDTO updateDTO)
+        public async Task<Location?> UpdateLocation(int id, LocationForUpdateDTO updateDTO)
         {
             var location = await _db.Locations.FirstOrDefaultAsync(u => u.LocationId == id);
 
@@ -151,14 +151,9 @@ namespace api.Repositories
             return locations;
         }
 
-        public async Task<List<Place?>> GetPlacesByLocation(int id)
+        public async Task<List<Place>> GetPlacesByLocation(int id)
         {
             var places = await _db.Places.Where(u => u.LocationId == id).ToListAsync();
-
-            if (places == null)
-            {
-                return null;
-            }
 
             return places;
         }

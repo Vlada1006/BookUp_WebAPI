@@ -17,6 +17,6 @@ namespace api.Interfaces
         public Task<Location?> PartialUpdateLocation(int id, LocationForPartialUpdateDTO updateDTO);
         public Task<Location?> DeleteLocation(int id);
         public Task<IEnumerable<Location?>> DeleteMultipleLocations(int[] ids);
-        public Task<List<Place?>> GetPlacesByLocation(int id);
+        public Task<List<Place>> GetPlacesByLocation(int id);
     }
 }

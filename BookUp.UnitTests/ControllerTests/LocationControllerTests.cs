@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Controllers;
 using api.DTOs.Locations;
+using api.DTOs.Places;
 using api.Helpers;
 using api.Interfaces;
 using api.Mappers;
@@ -155,7 +156,7 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task PartialUpdateCategory_ReturnsNotFound()
+        public async Task PartialUpdateLocation_ReturnsNotFound()
         {
             var _locationRepo = A.Fake<ILocationInterface>();
             var controller = new LocationController(_locationRepo);
@@ -173,7 +174,7 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task DeleteCategory_ReturnsOk()
+        public async Task DeleteLocation_ReturnsOk()
         {
             var _locationRepo = A.Fake<ILocationInterface>();
             var controller = new LocationController(_locationRepo);
@@ -193,7 +194,7 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task DeleteCategory_ReturnsNotFound()
+        public async Task DeleteLocation_ReturnsNotFound()
         {
             var _locationRepo = A.Fake<ILocationInterface>();
             var id = 99;
@@ -213,7 +214,7 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task DeleteMultipleCategories_ReturnsDeletedCategories()
+        public async Task DeleteMultipleLocations_ReturnsDeletedLocations()
         {
             var ids = new int[] { 1, 2, 3 };
             var _locationRepo = A.Fake<ILocationInterface>();
@@ -234,7 +235,7 @@ namespace BookUp.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task DeleteMultipleCategories_ReturnsNotFound()
+        public async Task DeleteMultipleLocations_ReturnsNotFound()
         {
             var _locationRepo = A.Fake<ILocationInterface>();
             var controller = new LocationController(_locationRepo);
@@ -244,6 +245,46 @@ namespace BookUp.UnitTests.ControllerTests
 
             Assert.IsType<NotFoundObjectResult>(notFoundResult);
             Assert.IsType<NotFoundObjectResult>(emptyResult);
+        }
+
+        [Fact]
+        public async Task GetPlacesByLocationId_ReturnsOK()
+        {
+            var _locationRepo = A.Fake<ILocationInterface>();
+            var controller = new LocationController(_locationRepo);
+            var locationId = 1;
+            var fakeLocation = new Location { LocationId = locationId };
+            var fakePlaces = new List<Place>
+            {
+                new Place {PlaceId = 1, PlaceName = "Place1"},
+                new Place {PlaceId = 2, PlaceName = "Place2"}
+            };
+
+            A.CallTo(() => _locationRepo.GetLocationById(locationId)).Returns(Task.FromResult(fakeLocation));
+            A.CallTo(() => _locationRepo.GetPlacesByLocation(locationId)).Returns(Task.FromResult(fakePlaces));
+
+            var result = await controller.GetPlacesByLocationId(locationId);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<List<PlaceDTO>>(okResult.Value);
+        }
+
+        [Fact]
+        public async Task GetPlacesByLocationId_ReturnsNotFound()
+        {
+            var _locationRepo = A.Fake<ILocationInterface>();
+            var controller = new LocationController(_locationRepo);
+            var locationId = 99;
+            var fakeLocation = new Location { LocationId = locationId };
+            var fakePlaces = new List<Place>();
+            
+             A.CallTo(() => _locationRepo.GetLocationById(locationId)).Returns(Task.FromResult(fakeLocation));
+            A.CallTo(() => _locationRepo.GetPlacesByLocation(locationId)).Returns(Task.FromResult(new List<Place>()));
+
+            var result = await controller.GetPlacesByLocationId(locationId);
+
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Places for the spesific location not found", notFoundResult.Value);
         }
     }
 }

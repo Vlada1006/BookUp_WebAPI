@@ -146,7 +146,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (ids.Length == 0 || ids == null)
+            if (ids == null || ids.Length == 0)
             {
                 return NotFound("IDs not found");
             }
