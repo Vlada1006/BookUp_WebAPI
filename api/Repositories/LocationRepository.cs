@@ -6,6 +6,7 @@ using api.Data;
 using api.DTOs.Locations;
 using api.Helpers;
 using api.Interfaces;
+using api.Mappers;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,7 @@ namespace api.Repositories
             _db = db;
         }
 
-        public async Task<List<Location>> GetLocations(QueryParameters queryParameters)
+        public async Task<List<LocationDTO>> GetLocations(QueryParameters queryParameters)
         {
             var locations = _db.Locations.AsQueryable();
 
@@ -43,9 +44,15 @@ namespace api.Repositories
                     break;
             }
 
+            if (queryParameters.ShowPlaces == true)
+            {
+                locations = locations.Include(u => u.Places);
+            }
+
             locations = locations.Skip(queryParameters.Size * (queryParameters.Page - 1)).Take(queryParameters.Size);
 
-            return await locations.ToListAsync();
+            var locationsToReturn = await locations.ToListAsync();
+            return locationsToReturn.Select(u => u.ToLocationDto(queryParameters.ShowPlaces)).ToList();
         }
 
         public async Task<Location?> GetLocationById(int id)

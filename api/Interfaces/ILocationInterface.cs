@@ -10,7 +10,7 @@ namespace api.Interfaces
 {
     public interface ILocationInterface
     {
-        public Task<List<Location>> GetLocations(QueryParameters queryParameters);
+        public Task<List<LocationDTO>> GetLocations(QueryParameters queryParameters);
         public Task<Location?> GetLocationById(int id);
         public Task<Location> CreateLocation(Location locationModel);
         public Task<Location?> UpdateLocation(int id, LocationForUpdateDTO updateDTO);

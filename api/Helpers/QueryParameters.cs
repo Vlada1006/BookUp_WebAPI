@@ -25,6 +25,7 @@ namespace api.Helpers
         public int Page { get; set; } = 1;
         public string SortBy { get; set; } = "Id";
         public bool IsDescending { get; set; } = false;
+        public bool ShowPlaces { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using api.Data;
 using api.Interfaces;
 using api.Models.OtherModels;
@@ -11,7 +12,12 @@ using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers()
+.AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+});
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 

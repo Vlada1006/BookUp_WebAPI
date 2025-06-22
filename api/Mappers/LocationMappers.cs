@@ -9,7 +9,7 @@ namespace api.Mappers
 {
     public static class LocationMappers
     {
-        public static LocationDTO ToLocationDto(this Location locationModel)
+        public static LocationDTO ToLocationDto(this Location locationModel, bool ShowPlaces = false)
         {
             return new LocationDTO
             {
@@ -21,7 +21,8 @@ namespace api.Mappers
                 ContactPhone = locationModel.ContactPhone,
                 Description = locationModel.Description,
                 PhotoUrl = locationModel.PhotoUrl,
-                CategoryId = locationModel.CategoryId
+                CategoryId = locationModel.CategoryId,
+                Places = ShowPlaces ? locationModel.Places?.Select(u=>u.ToPlaceDto()).ToList() : null
             };
         }
 

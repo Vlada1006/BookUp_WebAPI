@@ -31,8 +31,7 @@ namespace api.Controllers
                 return BadRequest();
             }
 
-            var locationsDTO = locations.Select(u => u.ToLocationDto());
-            return Ok(locationsDTO.ToList());
+            return Ok(locations.ToList());
         }
 
         [HttpGet]

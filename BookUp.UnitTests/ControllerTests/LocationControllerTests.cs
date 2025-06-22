@@ -23,13 +23,16 @@ namespace BookUp.UnitTests.ControllerTests
             var _locationRepo = A.Fake<ILocationInterface>();
             var controller = new LocationController(_locationRepo);
             var parameters = new QueryParameters();
-            var fakeLocations = new List<Location>
+            var fakeLocations = new List<LocationDTO>
             {
-                new Location {LocationId = 1, LocationName = "Coworking"},
-                new Location {LocationId = 2, LocationName = "Studio"}
+                new LocationDTO {LocationId = 1, LocationName = "Coworking"},
+                new LocationDTO {LocationId = 2, LocationName = "Studio"}
             };
 
-            A.CallTo(() => _locationRepo.GetLocations(parameters)).Returns(Task.FromResult(fakeLocations));
+            var taskResult = Task.FromResult(fakeLocations);
+            A.CallTo(() => _locationRepo.GetLocations(A<QueryParameters>.Ignored)).Returns(taskResult);
+
+            // A.CallTo(() => _locationRepo.GetLocations(A<QueryParameters>.Ignored)).Returns(Task.FromResult(fakeLocations));
 
             var result = await controller.GetAllLocations(parameters);
 

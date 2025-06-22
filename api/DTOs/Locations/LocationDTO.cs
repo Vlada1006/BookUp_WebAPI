@@ -18,6 +18,6 @@ namespace api.DTOs.Locations
         public string? Description { get; set; }
         public string? PhotoUrl { get; set; }
         public int CategoryId { get; set; }
-
+        public List<PlaceDTO>? Places { get; set; }
     }
 }
