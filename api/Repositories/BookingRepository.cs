@@ -30,7 +30,18 @@ namespace api.Repositories
             bookings = bookings.Skip(queryParameters.Size * (queryParameters.Page - 1)).Take(queryParameters.Size);
 
             return await bookings.ToListAsync();
-            
+        }
+
+        public async Task<Booking> GetBookingById(int id)
+        {
+            var booking = await _db.Bookings.FirstOrDefaultAsync(u => u.BookingId == id);
+
+            if (booking == null)
+            {
+                return null;
+            }
+
+            return booking;
         }
     }
 

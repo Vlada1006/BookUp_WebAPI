@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using api.DTOs.Bookings;
 using api.DTOs.Places;
 using api.Helpers;
 using api.Interfaces;
@@ -159,6 +160,21 @@ namespace api.Controllers
             }
 
             return Ok("Deleted");
+        }
+
+        [HttpGet]
+        [Route("{id:int}/bookings")]
+        public async Task<IActionResult> GetBookingsByPlaceId([FromRoute] int placeId)
+        {
+            var bookings = await _placeRepository.GetBookingsByPlaceId(placeId);
+
+            if (!bookings.Any())
+            {
+                return NotFound("Bookings for this place not found");
+            }
+
+            var bookingsDTO = bookings.Select(u => u.ToBookingDto());
+            return Ok(bookings.ToList());
         }
     
     }

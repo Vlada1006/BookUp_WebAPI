@@ -185,5 +185,12 @@ namespace api.Repositories
 
             return places;
         }
+
+        public async Task<List<Booking>> GetBookingsByPlaceId([FromRoute] int placeId)
+        {
+            var bookings = await _db.Bookings.Where(u => u.PlaceId == placeId).ToListAsync();
+
+            return bookings;
+        }
     }
 }

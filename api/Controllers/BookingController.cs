@@ -27,5 +27,20 @@ namespace api.Controllers
             var bookingsDTO = bookings.Select(u => u.ToBookingDto()).ToList();
             return Ok(bookingsDTO);
         }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetBookingById([FromRoute] int id)
+        {
+            var booking = await _bookingRepo.GetBookingById(id);
+
+            if (booking == null)
+            {
+                return NotFound("Booking not found");
+            }
+
+            return Ok(booking.ToBookingDto());
+        }
+
     }
 }
