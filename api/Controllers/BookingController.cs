@@ -24,6 +24,11 @@ namespace api.Controllers
         public async Task<IActionResult> GetBookings([FromQuery] BookingQueryParameters queryParameters)
         {
             var bookings = await _bookingRepo.GetBookings(queryParameters);
+
+            if (bookings == null)
+            {
+                return NotFound("Bookings not found");
+            }
             var bookingsDTO = bookings.Select(u => u.ToBookingDto()).ToList();
             return Ok(bookingsDTO);
         }

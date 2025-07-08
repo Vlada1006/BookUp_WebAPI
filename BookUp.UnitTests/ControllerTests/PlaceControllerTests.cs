@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using api.Controllers;
+using api.DTOs.Bookings;
 using api.DTOs.Places;
 using api.Helpers;
 using api.Interfaces;
@@ -13,6 +14,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BookUp.UnitTests.ControllerTests
 {
@@ -248,6 +250,46 @@ namespace BookUp.UnitTests.ControllerTests
 
             Assert.IsType<NotFoundObjectResult>(notFoundResult);
             Assert.IsType<NotFoundObjectResult>(emptyResult);
-        }      
+        }
+
+        [Fact]
+        public async Task GetBookingsByPlaceId_ReturnsOK()
+        {
+            var _placeRepo = A.Fake<IPlaceInterface>();
+            var controller = new PlaceController(_placeRepo);
+            var placeId = 1;
+            var fakeBookings = new List<Booking>
+            {
+                new Booking {BookingId = 1 },
+                new Booking {BookingId = 2 }
+            };
+            var fakePlace = new Place { PlaceId = placeId };
+
+            A.CallTo(() => _placeRepo.GetPlaceById(placeId)).Returns(Task.FromResult(fakePlace));
+            A.CallTo(() => _placeRepo.GetBookingsByPlaceId(placeId)).Returns(Task.FromResult(fakeBookings));
+
+            var result = await controller.GetBookingsByPlaceId(placeId);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<List<BookingDTO>>(okResult.Value);
+        }
+
+        [Fact]
+        public async Task GetBookingsByPlaceId_ReturnsNotFound()
+        {
+            var _placeRepo = A.Fake<IPlaceInterface>();
+            var controller = new PlaceController(_placeRepo);
+            var placeId = 99;
+            var fakeBookings = new List<Booking>();
+            var fakePlace = new Place { PlaceId = placeId };
+
+            A.CallTo(() => _placeRepo.GetPlaceById(placeId)).Returns(Task.FromResult(fakePlace));
+            A.CallTo(() => _placeRepo.GetBookingsByPlaceId(placeId)).Returns(new List<Booking>());
+
+            var result = await controller.GetBookingsByPlaceId(placeId);
+
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Bookings for this place not found", notFoundResult.Value);
+        }
     }
 }

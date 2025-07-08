@@ -281,7 +281,7 @@ namespace BookUp.UnitTests.ControllerTests
             var fakeLocation = new Location { LocationId = locationId };
             var fakePlaces = new List<Place>();
             
-             A.CallTo(() => _locationRepo.GetLocationById(locationId)).Returns(Task.FromResult(fakeLocation));
+            A.CallTo(() => _locationRepo.GetLocationById(locationId)).Returns(Task.FromResult(fakeLocation));
             A.CallTo(() => _locationRepo.GetPlacesByLocation(locationId)).Returns(Task.FromResult(new List<Place>()));
 
             var result = await controller.GetPlacesByLocationId(locationId);

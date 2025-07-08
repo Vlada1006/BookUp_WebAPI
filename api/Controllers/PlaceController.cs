@@ -174,7 +174,7 @@ namespace api.Controllers
             }
 
             var bookingsDTO = bookings.Select(u => u.ToBookingDto());
-            return Ok(bookings.ToList());
+            return Ok(bookingsDTO.ToList());
         }
     
     }
