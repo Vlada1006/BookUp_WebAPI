@@ -4,11 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions options) : base(options) { }
 
@@ -43,6 +45,24 @@ namespace api.Data
             .WithMany(u => u.Bookings)
             .HasForeignKey(u => u.PlaceId)
             .OnDelete(DeleteBehavior.Cascade);
+
+
+            List<IdentityRole> roles = new List<IdentityRole>
+            {
+                new IdentityRole
+                {
+                    Id = "2",
+                    Name = "User",
+                    NormalizedName = "USER"
+                },
+                new IdentityRole
+                {
+                    Id = "1",
+                    Name ="Admin",
+                    NormalizedName="ADMIN"
+                }
+            };
+            builder.Entity<IdentityRole>().HasData(roles);
         }
     }
 }
