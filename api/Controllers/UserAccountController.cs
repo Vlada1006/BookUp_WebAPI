@@ -23,7 +23,7 @@ namespace api.Controllers
 
 
         [HttpGet]
-        [Route("accountData")]
+        [Route("account-data")]
         public async Task<IActionResult> GetUserAccountData(string userId)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -44,7 +44,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        [Route("changePassword")]
+        [Route("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePasswordModel)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -65,7 +65,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        [Route("resetPassword")]
+        [Route("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPassword resetPasswordModel)
         {
             var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
@@ -83,6 +83,6 @@ namespace api.Controllers
             }
 
             return Ok("Password reset successfully");
-        }   
+        }
     }
 }

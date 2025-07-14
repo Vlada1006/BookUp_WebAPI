@@ -41,8 +41,10 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
     options.Password.RequireUppercase = true;
+    options.SignIn.RequireConfirmedEmail = true;
 })
-.AddEntityFrameworkStores<AppDbContext>();
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -75,6 +77,7 @@ builder.Services.AddScoped<IBookingInterface, BookingRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<PlaceAvailabilityService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 
 var app = builder.Build();
 

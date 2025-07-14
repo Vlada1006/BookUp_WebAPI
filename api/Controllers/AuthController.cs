@@ -19,11 +19,14 @@ namespace api.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<User> _signInManager;
-        public AuthController(UserManager<User> userManager, ITokenService tokenService, SignInManager<User> signInManager)
+        private readonly IEmailService _emailService;
+        public AuthController(UserManager<User> userManager, ITokenService tokenService,
+                              SignInManager<User> signInManager, IEmailService emailService)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
+            _emailService = emailService;
         }
 
 
@@ -50,18 +53,7 @@ namespace api.Controllers
                 {
                     var roleResult = await _userManager.AddToRoleAsync(newUser, "User");
 
-                    if (roleResult.Succeeded)
-                    {
-                        return Ok(
-                            new NewUserDTO
-                            {
-                                UserName = newUser.UserName,
-                                Email = newUser.Email,
-                                Token = _tokenService.CreateToken(newUser)
-                            }
-                        );
-                    }
-                    else
+                    if (!roleResult.Succeeded)
                     {
                         return StatusCode(500, roleResult.Errors);
                     }
@@ -70,6 +62,25 @@ namespace api.Controllers
                 {
                     return StatusCode(500, createdUser.Errors);
                 }
+
+                var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                var encodedEmailToken = Uri.EscapeDataString(emailToken);
+                var confirmationLink = $"http://localhost:5152/api/auth/confirm-email?userId={newUser.Id}&token={encodedEmailToken}";
+
+                await _emailService.SendEmailAsync(
+                    newUser.Email,
+                    "Confirm your email",
+                    $"Click the link to confirm your email: <a href='{confirmationLink}'>Confirm Email</a>"
+                );
+
+                return Ok(
+                    new NewUserDTO
+                    {
+                        UserName = newUser.UserName,
+                        Email = newUser.Email,
+                        Token = _tokenService.CreateToken(newUser)
+                    }
+                );
             }
             catch (Exception e)
             {
@@ -108,6 +119,25 @@ namespace api.Controllers
                     Token = _tokenService.CreateToken(user)
                 }
             );
+        }
+        
+        [HttpGet]
+        [Route("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return Ok("Email confirmed successfully");
+            }
+
+            return BadRequest("Invalid token or email confirmation failed");
         }
     }
 }
