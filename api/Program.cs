@@ -16,6 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddUserSecrets<Program>();
+
 builder.Services.AddOpenApi();
 builder.Services.AddControllers()
 .AddNewtonsoftJson(options =>

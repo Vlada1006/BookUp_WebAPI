@@ -41,6 +41,20 @@ namespace api.Controllers
                     return BadRequest(ModelState);
                 }
 
+                var existingUserEmail = await _userManager.FindByEmailAsync(registerDTO.Email);
+
+                if (existingUserEmail != null)
+                {
+                    return BadRequest(new { message = "Email is already registered." });
+                }
+
+                var existingUserName = await _userManager.FindByNameAsync(registerDTO.UserName);
+
+                if (existingUserName != null)
+                {
+                    return BadRequest(new { message = "User Name is already taken." });
+                }
+
                 var newUser = new User
                 {
                     UserName = registerDTO.UserName,
