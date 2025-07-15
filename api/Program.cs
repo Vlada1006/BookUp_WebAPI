@@ -44,6 +44,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequiredLength = 8;
     options.Password.RequireUppercase = true;
     options.SignIn.RequireConfirmedEmail = true;
+    options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
@@ -80,6 +81,8 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<PlaceAvailabilityService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+
+builder.Services.AddHostedService<OldUserAccountCleanUpService>();
 
 var app = builder.Build();
 

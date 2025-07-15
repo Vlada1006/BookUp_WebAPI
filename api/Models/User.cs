@@ -8,6 +8,7 @@ namespace api.Models
 {
     public class User : IdentityUser
     {
-        
+        public DateTime? LastLoginDate { get; set; }
+        public DateTime? DeletionWarningSent { get; set; }
     }
 }

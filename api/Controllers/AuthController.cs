@@ -125,6 +125,9 @@ namespace api.Controllers
                 return Unauthorized("Email or/and password incorrect!");
             }
 
+            user.LastLoginDate = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
             return Ok(
                 new NewUserDTO
                 {
