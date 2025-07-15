@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.Models.OtherModels.UserAccountModels
+namespace api.Models.DTOs.UserAccount
 {
-    public class ResetPassword
+    public class ResetPasswordDTO
     {
         public string Email { get; set; }
          public string Token { get; set; }

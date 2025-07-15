@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.Models.OtherModels.UserAccountModels
+namespace api.Models.DTOs.UserAccount
 {
-    public class ChangePassword
+    public class ChangePasswordDTO
     {
         public string CurrentPassword { get; set; }
         public string NewPassword { get; set; }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.Models.OtherModels.UserAccountModels
+namespace api.DTOs.UserAccount
 {
-    public class ConfirmEmail
+    public class ForgotPasswordDTO
     {
         public string Email { get; set; }
-        public string Token { get; set; }
     }
 }
