@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Auth;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using CloudinaryDotNet.Actions;
@@ -87,13 +88,15 @@ namespace api.Controllers
                     $"Click the link to confirm your email: <a href='{confirmationLink}'>Confirm Email</a>"
                 );
 
-                return Ok(
+                return Ok(new ApiResponse<NewUserDTO>(
+                    "Please confirm your email before log in",
+                    
                     new NewUserDTO
                     {
                         UserName = newUser.UserName,
                         Email = newUser.Email,
                         Token = _tokenService.CreateToken(newUser)
-                    }
+                    })                   
                 );
             }
             catch (Exception e)

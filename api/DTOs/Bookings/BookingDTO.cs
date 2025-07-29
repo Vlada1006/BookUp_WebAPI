@@ -10,7 +10,7 @@ namespace api.DTOs.Bookings
     {
         public int BookingId { get; set; }
         public int PlaceId { get; set; }
-        public string? UserId { get; set; }
+        public string UserId { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
