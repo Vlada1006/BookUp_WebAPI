@@ -18,9 +18,11 @@ namespace api.Mappers
                 UserName = userModel.UserName,
                 Email = userModel.Email,
                 LastLoginDate = userModel.LastLoginDate.HasValue
-                    ? userModel.LastLoginDate.Value.ToString("yyyy-MM-dd HH:mm") 
+                    ? userModel.LastLoginDate.Value.ToString("yyyy-MM-dd HH:mm")
                     : "wasn`t logged in"
             };
         }
+
+        
     }
 }
