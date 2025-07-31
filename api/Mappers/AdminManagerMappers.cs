@@ -22,7 +22,5 @@ namespace api.Mappers
                     : "wasn`t logged in"
             };
         }
-
-        
     }
 }

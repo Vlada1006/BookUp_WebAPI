@@ -110,6 +110,7 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<PlaceAvailabilityService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+builder.Services.AddScoped<IAdminManagementService, AdminManagementService>();
 
 builder.Services.AddHostedService<OldUserAccountCleanUpService>();
 

@@ -48,4 +48,6 @@ namespace api.Controllers
         }
 
     }
+
+    //TODO: add get booking by user id for admins
 }

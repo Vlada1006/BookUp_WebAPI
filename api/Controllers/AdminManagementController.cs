@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.AdminManagement;
+using api.Helpers;
+using api.Interfaces;
 using api.Mappers;
 using api.Models;
 using Azure;
@@ -19,33 +21,31 @@ namespace api.Controllers
     // [Authorize(Roles = "Admin")]
     public class AdminManagementController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        public AdminManagementController(UserManager<User> userManager)
+        private readonly IAdminManagementService _adminManagementService;
+        public AdminManagementController(IAdminManagementService adminManagementService)
         {
-            _userManager = userManager;
+            _adminManagementService = adminManagementService;
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] UsersQueryParameters queryParameters)
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _adminManagementService.GetUsers(queryParameters);
 
             if (users == null)
             {
                 return NotFound("Users not found");
             }
 
-            var usersDTO = users.Select(u => u.ToUserDto()).ToList();
-
-            return Ok(usersDTO);
+            return Ok(users.ToList());            
         }
 
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _adminManagementService.GetUserById(id);
 
             if (user == null)
             {
@@ -59,7 +59,7 @@ namespace api.Controllers
         [Route("email")]
         public async Task<IActionResult> GetUserByEmail([FromRoute] string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _adminManagementService.GetUserByEmail(email);
 
             if (user == null)
             {
@@ -71,27 +71,46 @@ namespace api.Controllers
 
         [HttpPatch]
         [Route("{id}")]
-        public async Task<IActionResult> PartialUserUpdate([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateUserDTO> updateUserDTO)
+        public async Task<IActionResult> PartialUserUpdate([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateUserDTO> patchDoc)
         {
-//separate to service!!!
+            if (!ModelState.IsValid || patchDoc == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var patchDTO = new UpdateUserDTO();
+
+            patchDoc.ApplyTo(patchDTO, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userToUpdate = await _adminManagementService.PartialUserUpdate(id, patchDTO);
+
+            if (userToUpdate == null)
+            {
+                return NotFound("User not found");
+            }
+
+            return Ok(userToUpdate.ToUserDto());
         }
 
         [HttpPost]
         [Route("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+           if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _adminManagementService.DeleteUser(id);
 
             if (user == null)
             {
                 return NotFound("User not found");
-            }
-
-            var result = await _userManager.DeleteAsync(user);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
             }
 
             return Ok("User deleted successfully");
